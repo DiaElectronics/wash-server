@@ -1,0 +1,56 @@
+version: "3.9"
+
+volumes:
+  pg_db_data:
+      driver: local
+
+services:
+  lea-central-wash:
+    build:
+        context: ../dockerfiles/lea-central-wash/.
+        dockerfile: ./Dockerfile
+    ports:
+      - "8020:8020"
+    restart: always
+    cap_add:
+      - ALL
+    networks:
+        washnet:
+          ipv4_address: 10.5.0.10
+    depends_on:
+      - postgres
+  online-kasse:
+    build:
+        context: ../dockerfiles/online-kasse/.
+        dockerfile: ./Dockerfile
+    ports:
+      - "8443:8443"
+    restart: always
+    cap_add:
+      - ALL
+    networks:
+        washnet:
+          ipv4_address: 10.5.0.11
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:13
+    restart: always
+    volumes:
+      - pg_db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: wash
+      POSTGRES_USER: wash
+      POSTGRES_PASSWORD: adm-pass-test
+    networks:
+      washnet:
+          ipv4_address: 10.5.0.20
+    ports:
+      - "5432:5432"
+networks:
+  washnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1

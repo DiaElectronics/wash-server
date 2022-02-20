@@ -21,6 +21,8 @@ RUN 7z x driver.7z
 RUN chmod 777 "/10.8.1.0/installer/deb/libfptr10_10.8.1.0_amd64.deb" && \
     apt-get install -y "./10.8.1.0/installer/deb/libfptr10_10.8.1.0_amd64.deb"
 COPY --from=builder /online_kasse/cmd/web/web /kasse
+COPY --from=builder /online_kasse/cmd/web/key.pem /
+COPY --from=builder /online_kasse/cmd/web/cert.pem /
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
