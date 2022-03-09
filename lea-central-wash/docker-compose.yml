@@ -19,6 +19,13 @@ services:
           ipv4_address: 10.5.0.10
     depends_on:
       - postgres
+    device_cgroup_rules:
+      - "c 188:* rmw"
+    volumes:
+      - "/dev:/dev:ro"
+      - "/run/udev:/run/udev:ro"
+    group_add:
+      - dialout
   online-kasse:
     build:
         context: ../dockerfiles/online-kasse/.
@@ -26,11 +33,18 @@ services:
     ports:
       - "8443:8443"
     restart: always
+    device_cgroup_rules:
+      - "c 188:* rmw"
+    volumes:
+      - "/dev:/dev:ro"
+      - "/run/udev:/run/udev:ro"
     cap_add:
       - ALL
     networks:
         washnet:
           ipv4_address: 10.5.0.11
+    group_add:
+      - dialout
     depends_on:
       - postgres
   postgres:
