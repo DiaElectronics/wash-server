@@ -13,7 +13,7 @@ RUN chmod 777 /usr/local/go/bin/go
 RUN export PATH=$PATH:/usr/local/go/bin && cd /online_kasse/cmd/web && go build
 
 FROM ubuntu:22.04
-RUN apt update -y && apt upgrade -y && apt install -y p7zip-full gcc libc-dev wget
+RUN apt update -y && apt upgrade -y && apt install -y p7zip-full gcc libc-dev wget libusb-1.0-0
 
 RUN wget -O driver.zip  "http://fs.atol.ru/_layouts/15/atol.templates/Handlers/FileHandler.ashx?guid=700b2df4-42a8-4b0f-8ca1-ab0e2390cc56&webUrl="
 RUN 7z x driver.zip
