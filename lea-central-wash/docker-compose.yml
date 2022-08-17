@@ -5,9 +5,13 @@ volumes:
       driver: local
 
 services:
-  lea-central-wash:
+  hal:
     build:
-        context: ../dockerfiles/lea-central-wash/.
+        context: ../dockerfiles/hal/.
+        dockerfile: ./Dockerfile
+  storage:
+    build:
+        context: ../dockerfiles/storage/.
         dockerfile: ./Dockerfile
     ports:
       - "8020:8020"
