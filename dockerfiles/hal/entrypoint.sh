@@ -1,3 +1,3 @@
 #!/bin/bash 
 
-./hal 
+./lea-central-wash/cmd/hal 
