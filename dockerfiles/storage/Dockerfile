@@ -19,11 +19,11 @@ RUN /lea-central-wash/install/ubuntu2004/3_install_dev_tools.sh
 
 RUN export PATH=$PATH:/usr/local/go/bin && cd /lea-central-wash && go build ./cmd/storage 
 
-FROM ubuntu:22.04
+FROM ubuntu:22.04service
 
 RUN apt update -y && apt upgrade -y
 
-COPY --from=storagebuilder /lea-central-wash/cmd/storage /storage
+COPY --from=storagebuilder /lea-central-wash/storage /storage
 COPY --from=storagebuilder /lea-central-wash/cmd/storage/internal/migration /migration
 
 COPY entrypoint.sh /entrypoint.sh
