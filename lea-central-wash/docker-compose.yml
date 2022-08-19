@@ -9,6 +9,21 @@ services:
     build:
         context: ../dockerfiles/hal/.
         dockerfile: ./Dockerfile
+    ports:
+      - "8099:8099"
+    restart: always
+    cap_add:
+      - ALL
+    networks:
+        washnet:
+          ipv4_address: 10.5.0.12
+    device_cgroup_rules:
+      - "c 188:* rmw"
+    volumes:
+      - "/dev:/dev:ro"
+      - "/run/udev:/run/udev:ro"
+    group_add:
+      - dialout
   storage:
     build:
         context: ../dockerfiles/storage/.
@@ -23,6 +38,7 @@ services:
           ipv4_address: 10.5.0.10
     depends_on:
       - postgres
+      - hal
     device_cgroup_rules:
       - "c 188:* rmw"
     volumes:
