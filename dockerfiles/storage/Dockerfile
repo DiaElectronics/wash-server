@@ -19,7 +19,7 @@ RUN /lea-central-wash/install/ubuntu2004/3_install_dev_tools.sh
 
 RUN export PATH=$PATH:/usr/local/go/bin && cd /lea-central-wash && go build ./cmd/storage 
 
-FROM ubuntu:22.04service
+FROM ubuntu:22.04
 
 RUN apt update -y && apt upgrade -y
 
