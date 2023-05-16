@@ -71,7 +71,7 @@ services:
     image: postgres:13
     restart: always
     volumes:
-      - pg_db_data:/var/lib/postgresql/data
+      - /var/db:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: wash
       POSTGRES_USER: wash
