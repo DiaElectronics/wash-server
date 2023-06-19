@@ -6,9 +6,8 @@ volumes:
 
 services:
   hal:
-    build:
-        context: ../dockerfiles/hal/.
-        dockerfile: ./Dockerfile
+    image: romanfedyashov/lcw-hal:v0.0.2
+    container_name: hal
     ports:
       - "8099:8099"
     restart: always
@@ -25,9 +24,8 @@ services:
     group_add:
       - dialout
   storage:
-    build:
-        context: ../dockerfiles/storage/.
-        dockerfile: ./Dockerfile
+    image: romanfedyashov/lcw-storage:v0.0.2
+    container_name: storage
     ports:
       - "8020:8020"
     restart: always
@@ -47,9 +45,8 @@ services:
     group_add:
       - dialout
   online-kasse:
-    build:
-        context: ../dockerfiles/online-kasse/.
-        dockerfile: ./Dockerfile
+    image: romanfedyashov/lcw-kasse:v0.0.1
+    container_name: kasse
     ports:
       - "8443:8443"
     restart: always
@@ -69,6 +66,7 @@ services:
       - postgres
   postgres:
     image: postgres:13
+    container_name: lcw-pg
     restart: always
     volumes:
       - /var/db:/var/lib/postgresql/data
@@ -79,8 +77,6 @@ services:
     networks:
       washnet:
           ipv4_address: 10.5.0.20
-    ports:
-      - "5432:5432"
 networks:
   washnet:
     driver: bridge
