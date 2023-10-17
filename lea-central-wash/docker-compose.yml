@@ -6,7 +6,7 @@ volumes:
 
 services:
   hal:
-    image: romanfedyashov/lcw-hal:v0.0.3
+    image: romanfedyashov/lcw-hal:v0.0.4
     container_name: hal
     ports:
       - "8099:8099"
@@ -24,7 +24,7 @@ services:
     group_add:
       - dialout
   storage:
-    image: romanfedyashov/lcw-storage:v0.0.7
+    image: romanfedyashov/lcw-storage:v0.0.8
     container_name: storage
     ports:
       - "8020:8020"
