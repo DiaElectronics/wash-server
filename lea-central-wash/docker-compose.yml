@@ -6,7 +6,7 @@ volumes:
 
 services:
   hal:
-    image: romanfedyashov/lcw-hal:v0.0.4
+    image: romanfedyashov/lcw-hal:v0.0.6
     container_name: hal
     ports:
       - "8099:8099"
@@ -24,11 +24,18 @@ services:
     group_add:
       - dialout
   storage:
-    image: romanfedyashov/lcw-storage:v0.0.9
+    image: romanfedyashov/lcw-storage:v0.0.11
     container_name: storage
     ports:
       - "8020:8020"
     restart: always
+    environment:
+      STORAGE_DB_HOST: lcw-pg
+      STORAGE_DB_NAME: wash
+      STORAGE_DB_USER: wash
+      STORAGE_DB_PASS: adm-pass-test
+      STORAGE_KASSE_ENDPOINT: https://online-kasse:8443
+      STORAGE_HAL_ENDPOINT: hal:8099
     cap_add:
       - ALL
     networks:
