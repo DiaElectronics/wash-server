@@ -49,6 +49,10 @@ services:
     volumes:
       - "/dev:/dev:ro"
       - "/run/udev:/run/udev:ro"
+      - "./stations:/app/stations"
+      - "./ssh:/app/ssh"
+      - "~/firmware_temp:/root/firmware_temp"
+      - "~/openwashing:/root/openwashing"
     group_add:
       - dialout
   online-kasse:

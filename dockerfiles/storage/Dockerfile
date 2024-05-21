@@ -21,7 +21,10 @@ RUN export PATH=$PATH:/usr/local/go/bin && cd /lea-central-wash && go build ./cm
 
 FROM ubuntu:22.04
 
-RUN apt update -y && apt upgrade -y
+RUN apt update -y && \
+    apt upgrade -y && \
+    apt install -y git && \
+    git config --global --add safe.directory /root/openwashing
 
 COPY --from=storagebuilder /lea-central-wash/storage /storage
 COPY --from=storagebuilder /lea-central-wash/cmd/storage/internal/migration /migration
