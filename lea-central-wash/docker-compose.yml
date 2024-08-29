@@ -26,8 +26,14 @@ services:
       - "/run/udev:/run/udev:ro"
     group_add:
       - dialout
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+        compress: "true"
   storage:
-    image: dev.openrbt.com/lcw-storage:v0.0.18
+    image: dev.openrbt.com/lcw-storage:v0.0.19
     container_name: storage
     ports:
       - "8020:8020"
@@ -59,6 +65,12 @@ services:
       - "./ssh:/app/ssh"
     group_add:
       - dialout
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+        compress: "true"
   online-kasse:
     image: dev.openrbt.com/lcw-kasse:v0.0.1
     container_name: kasse
