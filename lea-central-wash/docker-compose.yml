@@ -131,6 +131,8 @@ services:
     networks:
       washnet:
           ipv4_address: 10.5.0.22
+    depends_on:
+      - storage
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ../:/app/dir
