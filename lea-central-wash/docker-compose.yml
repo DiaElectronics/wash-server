@@ -123,7 +123,7 @@ services:
     ports:
       - "9090:9090"
   updater:
-    image: dev.openrbt.com/updater:0.0.2
+    image: dev.openrbt.com/updater:0.0.3
     container_name: updater
     restart: always
     environment:
@@ -131,12 +131,22 @@ services:
     networks:
       washnet:
           ipv4_address: 10.5.0.22
+    pid: host
+    privileged: true
     depends_on:
       - storage
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - ../:/app/dir
       - ./logs:/app/logs
+  updater-helper:
+    image: dev.openrbt.com/updater-helper:v0.0.1
+    container_name: updater-helper
+    pid: host
+    privileged: true
+    profiles:
+      - manual
+    volumes:
+      - ./:/app/dir
 networks:
   washnet:
     driver: bridge
