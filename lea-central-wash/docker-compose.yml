@@ -8,7 +8,7 @@ volumes:
 
 services:
   hal:
-    image: dev.openrbt.com/lcw-hal:v0.0.9
+    image: dev.openrbt.com/lcw-hal:v0.0.10
     container_name: hal
     ports:
       - "8099:8099"
