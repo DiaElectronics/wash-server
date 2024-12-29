@@ -8,7 +8,7 @@ volumes:
 
 services:
   hal:
-    image: dev.openrbt.com/lcw-hal:v0.0.10
+    image: registry.open-rbt.com/lcw-hal:v0.0.10
     container_name: hal
     ports:
       - "8099:8099"
@@ -33,7 +33,7 @@ services:
         max-file: "10"
         compress: "true"
   storage:
-    image: dev.openrbt.com/lcw-storage:v0.0.19
+    image: registry.open-rbt.com/lcw-storage:v0.0.22
     container_name: storage
     ports:
       - "8020:8020"
@@ -72,7 +72,7 @@ services:
         max-file: "10"
         compress: "true"
   online-kasse:
-    image: dev.openrbt.com/lcw-kasse:v0.0.1
+    image: registry.open-rbt.com/lcw-kasse:v0.0.1
     container_name: kasse
     ports:
       - "8443:8443"
@@ -92,7 +92,7 @@ services:
     depends_on:
       - postgres
   postgres:
-    image: dev.openrbt.com/postgres:13
+    image: registry.open-rbt.com/postgres:13
     container_name: lcw-pg
     restart: always
     volumes:
@@ -111,7 +111,7 @@ services:
       timeout: 10s
       retries: 5
   prometheus:
-    image: dev.openrbt.com/prometheus:v2.45.6
+    image: registry.open-rbt.com/prometheus:v2.45.6
     container_name: prometheus
     restart: always
     networks:
@@ -123,7 +123,7 @@ services:
     ports:
       - "9090:9090"
   updater:
-    image: dev.openrbt.com/updater:0.0.3
+    image: registry.open-rbt.com/updater:0.0.3
     container_name: updater
     restart: always
     environment:
@@ -139,7 +139,7 @@ services:
       - ../:/app/dir
       - ./logs:/app/logs
   updater-helper:
-    image: dev.openrbt.com/updater-helper:v0.0.1
+    image: registry.open-rbt.com/updater-helper:v0.0.1
     container_name: updater-helper
     pid: host
     privileged: true
