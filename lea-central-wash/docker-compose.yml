@@ -149,7 +149,7 @@ services:
     volumes:
       - ./:/app/dir
   mobile_wash_control_web:
-    image: registry.open-rbt.com/mobile-wash-control-web:v0.0.1
+    image: registry.open-rbt.com/mobile-wash-control-web:v0.0.2
     container_name: web
     ports:
       - "8080:80"      
