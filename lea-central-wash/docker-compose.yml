@@ -5,6 +5,8 @@ volumes:
     driver: local
   prometheus_data:
     driver: local
+  minio_data:
+    driver: local
 
 services:
   hal:
@@ -49,6 +51,10 @@ services:
       STORAGE_START_DELAY: 0
       STORAGE_KEY_SSH_PATH: /app/ssh/id_rsa
       STORAGE_STATIONS_DIR_PATH: /app/stations
+      STORAGE_MINIO_ENDPOINT: minio:9000
+      STORAGE_MINIO_ACCESS_KEY: minioadmin
+      STORAGE_MINIO_SECRET_KEY: minioadmin
+      STORAGE_MINIO_BUCKET: firmware
     cap_add:
       - ALL
     networks:
@@ -57,6 +63,7 @@ services:
     depends_on:
       - postgres
       - hal
+      - minio
     device_cgroup_rules:
       - "c 188:* rmw"
     volumes:
@@ -164,6 +171,23 @@ services:
         ipv4_address: 10.5.0.23
     ports:
       - "8080:80"
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    networks:
+      washnet:
+        ipv4_address: 10.5.0.30
 
 networks:
   washnet:
