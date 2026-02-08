@@ -36,7 +36,7 @@ services:
         compress: "true"
  
   storage:
-    image: registry.open-rbt.com/lcw-storage:v0.0.24
+    image: registry.open-rbt.com/lcw-storage:v0.0.31
     container_name: storage
     ports:
       - "8020:8020"
