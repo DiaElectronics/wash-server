@@ -163,7 +163,7 @@ services:
       - ./:/app/dir   
 
   mobile-wash-control-web:
-    image: registry.open-rbt.com/mobile-wash-control-web:v0.0.8
+    image: registry.open-rbt.com/mobile-wash-control-web:v0.0.11
     container_name: wash-control
     restart: always
     networks:
