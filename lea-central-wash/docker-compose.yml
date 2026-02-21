@@ -10,7 +10,7 @@ volumes:
 
 services:
   hal:
-    image: registry.open-rbt.com/lcw-hal:v0.0.10
+    image: registry.open-rbt.com/lcw-hal:v0.0.12
     container_name: hal
     ports:
       - "8099:8099"
