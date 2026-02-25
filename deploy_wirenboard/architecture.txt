@@ -1,0 +1,124 @@
+deploy_wirenboard — скрипты развёртывания на Wirenboard
+========================================================
+
+Структура кода:
+  menu.py          — главное интерактивное меню (Windows NT style, curses)
+  utils.py         — утилиты (сканирование сети, SSH и т.д.) — чистый Python
+  steps.py         — шаги развёртывания, каждый шаг = функция с log() callback
+
+Режим работы:
+  1. Ручной (сейчас): человек запускает menu.py, выбирает пункт,
+     меню вызывает соответствующую функцию из steps.py
+  2. Автоматический (потом): Claude вызывает функции steps.py
+     последовательно без участия человека
+
+Правила кода:
+  - menu.py — только UI/меню (curses), никакой логики развёртывания
+  - utils.py — переиспользуемые утилиты (сеть, SSH, системные)
+  - steps.py — атомарные шаги, каждая функция делает одну вещь
+  - Шаги должны быть идемпотентны (безопасны для повторного запуска)
+  - Шаги принимают log(msg) callback для live-вывода в UI
+  - Всё на чистом Python, без вызовов внешних утилит ОС для базовых задач
+
+========================================================
+Железо Wirenboard
+========================================================
+
+Хранилище:
+  /              2G eMMC (rootfs, мало места, ~500M free)
+  /mnt/data     13G eMMC (persistent partition, ~8G free)
+  /dev/sda1    224G SSD  (внешний диск, нужно форматировать ext4, монтировать)
+
+Принцип размещения данных:
+  - /mnt/data — всё что НЕ МЕНЯЕТСЯ и НЕ РАСТЁТ (конфиги, бинарники, образы)
+  - SSD (/mnt/ssd) — всё что РАСТЁТ и МЕНЯЕТСЯ (логи, данные БД, minio)
+  - КРИТИЧНО: если SSD отваливается/ломается — система ДОЛЖНА запускаться!
+    Логи и данные SSD — не блокируют старт. nofail в fstab обязательно.
+
+Раскладка:
+  /mnt/data/docker/              — Docker data-root (images, containers)
+  /mnt/data/pg-critical-data/    — PostgreSQL critical: данные (конфиг, станции, программы...)
+  /mnt/ssd/pg-growing-data/      — PostgreSQL growing: данные (отчёты, логи, транзакции)
+  /mnt/ssd/logs/                 — все логи (docker, app) — растёт
+  /mnt/ssd/minio/                — MinIO данные (прошивки, скины) — растёт
+
+SSH:
+  user: pi
+  pass: Kirilltemp14
+
+========================================================
+Архитектура БД: два PostgreSQL кластера
+========================================================
+
+Один Docker-образ postgres, два контейнера, два порта, два data-dir:
+
+  pg-critical  :5432  /mnt/data/pg-critical-data/
+    Таблицы которые НЕ РАСТУТ, нужны для работы системы:
+      station, program, station_program, users, keypair,
+      card_reader, kasse, station_hash, advertising_campaign,
+      config_vars_int, config_vars_bool, config_vars_string,
+      station_config_vars_int, station_config_vars_bool, station_config_vars_string,
+      update_config, skin
+    ~17 таблиц, <100MB суммарно
+
+  pg-growing   :5433  /mnt/ssd/pg-growing-data/
+    Таблицы которые РАСТУТ бесконечно, могут быть потеряны:
+      money_report, money_collection, relay_report, relay_stat,
+      reset_relay_report, open_station_log, sbp_payments,
+      openwashing_logs, bonus_rabbit_send_log,
+      bonus_rabbit_money_report_send_log
+    + materialized views: mv_relay_stat_dates, mv_program_stat_dates,
+      mv_current_relay_stat, mv_current_program_stat
+    ~14 таблиц, растут до гигабайтов
+
+Отказоустойчивость:
+  - SSD отвалился → pg-growing не стартует → pg-critical работает
+  - Приложение видит что pg-growing недоступен → degraded mode:
+    мойка работает, платежи принимаются, отчёты не пишутся
+  - Когда SSD возвращается → pg-growing поднимается, всё восстанавливается
+
+Рефакторинг lcw (cmd/storage):
+  1. Разбить Repo interface (app/app.go:330) на два:
+     - CriticalRepo (~100 методов): stations, programs, users, config,
+       kasse, advertising, keypairs, hashes, skins, station_config_vars
+     - GrowingRepo (~50 методов): SaveMoneyReport, SaveRelayReport,
+       CollectionReports, OpenwashingLogs, SbpPayments, RabbitMessages,
+       RefreshMotorStats*
+
+  2. В dal/ два *sqlx.DB (или два отдельных DAL struct):
+     - dalCritical → подключение к :5432
+     - dalGrowing  → подключение к :5433
+
+  3. В app struct два поля:
+     - repo        CriticalRepo    (обязательный, паника если нет)
+     - growingRepo GrowingRepo     (опциональный, nil если SSD нет)
+
+  4. Nil-safe обёртка для growingRepo:
+     - Все методы GrowingRepo обёрнуты: если growingRepo == nil → log warning, return nil/empty
+     - Приложение НЕ падает, просто не пишет отчёты
+     - Периодическая проверка: пытаемся reconnect к :5433
+
+  5. Два набора миграций:
+     - cmd/storage/internal/migration/critical/  — таблицы pg-critical
+     - cmd/storage/internal/migration/growing/   — таблицы pg-growing
+     - Goose запускается отдельно для каждого кластера
+
+  6. def.go — два набора переменных:
+     - DBHost, DBPort, DBUser, DBPass, DBName           — critical (:5432)
+     - GrowingDBHost, GrowingDBPort, ...                 — growing (:5433)
+
+========================================================
+Шаги деплоя (порядок)
+========================================================
+
+  1. Scan Network & Select Device
+  2. Format & mount SSD (ext4, /mnt/ssd, nofail в fstab)
+  3. Install Docker (data-root → /mnt/data/docker)
+  4. Deploy docker-compose:
+     - pg-critical  (postgres, порт 5432, volume /mnt/data/pg-critical-data)
+     - pg-growing   (postgres, порт 5433, volume /mnt/ssd/pg-growing-data)
+     - minio        (volume /mnt/ssd/minio)
+     - storage      (lcw, подключается к обоим PG)
+     - hal
+  5. Run migrations (отдельно для каждого кластера)
+  6. Configure logging (всё на /mnt/ssd/logs)

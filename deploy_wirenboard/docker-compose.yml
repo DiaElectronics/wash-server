@@ -1,0 +1,227 @@
+version: "3.9"
+
+volumes:
+  prometheus_data:
+    driver: local
+
+services:
+  hal:
+    image: registry.open-rbt.com/lcw-hal:v0.0.13
+    container_name: hal
+    ports:
+      - "8099:8099"
+    restart: always
+    cap_add:
+      - ALL
+    networks:
+      washnet:
+        ipv4_address: 10.5.0.12
+    device_cgroup_rules:
+      - "c 188:* rmw"
+      - "c 166:* rmw"
+    volumes:
+      - "/dev:/dev:ro"
+      - "/run/udev:/run/udev:ro"
+    group_add:
+      - dialout
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  storage:
+    image: registry.open-rbt.com/lcw-storage:v0.0.45
+    container_name: storage
+    ports:
+      - "8020:8020"
+    restart: always
+    environment:
+      STORAGE_DB_HOST: lcw-pg
+      STORAGE_DB_NAME: wash
+      STORAGE_DB_USER: wash
+      STORAGE_DB_PASS: adm-pass-test
+      STORAGE_KASSE_ENDPOINT: https://online-kasse:8443
+      STORAGE_HAL_ENDPOINT: hal:8099
+      STORAGE_START_DELAY: 0
+      STORAGE_KEY_SSH_PATH: /app/ssh/id_rsa
+      STORAGE_STATIONS_DIR_PATH: /app/stations
+      STORAGE_MINIO_ENDPOINT: minio:9000
+      STORAGE_MINIO_ACCESS_KEY: minioadmin
+      STORAGE_MINIO_SECRET_KEY: minioadmin
+      STORAGE_MINIO_BUCKET: firmware
+    cap_add:
+      - ALL
+    networks:
+      washnet:
+        ipv4_address: 10.5.0.10
+    depends_on:
+      - postgres
+      - hal
+      - minio
+    device_cgroup_rules:
+      - "c 188:* rmw"
+    volumes:
+      - "/dev:/dev:ro"
+      - "/run/udev:/run/udev:ro"
+      - "./stations:/app/stations"
+      - "./ssh:/app/ssh"
+      - "/etc/machine-id:/etc/machine-id:ro"
+    group_add:
+      - dialout
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  online-kasse:
+    image: registry.open-rbt.com/lcw-kasse:v0.0.4
+    container_name: kasse
+    ports:
+      - "8443:8443"
+    restart: always
+    device_cgroup_rules:
+      - "c 189:* rmw"
+    volumes:
+      - "/dev:/dev:ro"
+      - "/run/udev:/run/udev:ro"
+    cap_add:
+      - ALL
+    networks:
+      washnet:
+        ipv4_address: 10.5.0.11
+    group_add:
+      - dialout
+    depends_on:
+      - postgres
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  postgres:
+    image: registry.open-rbt.com/postgres:14
+    container_name: lcw-pg
+    restart: always
+    volumes:
+      - /mnt/ssd/pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: wash
+      POSTGRES_USER: wash
+      POSTGRES_PASSWORD: adm-pass-test
+    networks:
+      washnet:
+        ipv4_address: 10.5.0.20
+    healthcheck:
+      test:
+        [ "CMD-SHELL", "pg_isready -U wash -d wash" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  prometheus:
+    image: registry.open-rbt.com/prometheus:v2.45.6
+    container_name: prometheus
+    restart: always
+    networks:
+      washnet:
+        ipv4_address: 10.5.0.21
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9091:9090"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  mobile-wash-control-web:
+    image: registry.open-rbt.com/mobile-wash-control-web:v0.0.16
+    container_name: wash-control
+    restart: always
+    networks:
+      washnet:
+        ipv4_address: 10.5.0.23
+    ports:
+      - "8080:80"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  updater:
+    image: registry.open-rbt.com/updater:0.0.4
+    container_name: updater
+    restart: always
+    environment:
+      LOG_DIR: ./logs
+    networks:
+      washnet:
+        ipv4_address: 10.5.0.22
+    pid: host
+    privileged: true
+    depends_on:
+      - storage
+    volumes:
+      - ../:/app/dir
+      - ./logs:/app/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  updater-helper:
+    image: registry.open-rbt.com/updater-helper:v0.0.1
+    container_name: updater-helper
+    pid: host
+    privileged: true
+    profiles:
+      - manual
+    volumes:
+      - ./:/app/dir
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  minio:
+    image: registry.open-rbt.com/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - /mnt/ssd/minio:/data
+    networks:
+      washnet:
+        ipv4_address: 10.5.0.30
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+networks:
+  washnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
