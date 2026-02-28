@@ -19,6 +19,7 @@ services:
     device_cgroup_rules:
       - "c 188:* rmw"
       - "c 166:* rmw"
+      - "c 4:* rmw"
     volumes:
       - "/dev:/dev:ro"
       - "/run/udev:/run/udev:ro"
