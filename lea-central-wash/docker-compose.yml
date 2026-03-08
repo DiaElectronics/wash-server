@@ -74,13 +74,16 @@ services:
       - "/etc/machine-id:/etc/machine-id:ro"
     group_add:
       - dialout
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
         max-file: "10"
         compress: "true"
- 
+
   online-kasse:
     image: registry.open-rbt.com/lcw-kasse:v0.0.1
     container_name: kasse
