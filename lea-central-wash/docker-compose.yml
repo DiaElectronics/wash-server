@@ -7,10 +7,12 @@ volumes:
     driver: local
   minio_data:
     driver: local
+  grafana_data:
+    driver: local
 
 services:
   hal:
-    image: registry.open-rbt.com/lcw-hal:v0.0.14
+    image: registry.open-rbt.com/lcw-hal:v0.0.19
     container_name: hal
     ports:
       - "8099:8099"
@@ -36,7 +38,7 @@ services:
         compress: "true"
  
   storage:
-    image: registry.open-rbt.com/lcw-storage:v0.0.45
+    image: registry.open-rbt.com/lcw-storage:v0.0.46
     container_name: storage
     ports:
       - "8020:8020"
@@ -165,8 +167,28 @@ services:
     volumes:
       - ./:/app/dir   
 
+  grafana:
+    image: grafana/grafana:11.6.0
+    container_name: grafana
+    restart: always
+    networks:
+      washnet:
+        ipv4_address: 10.5.0.24
+    ports:
+      - "3000:3000"
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus
+
   mobile-wash-control-web:
-    image: registry.open-rbt.com/mobile-wash-control-web:v0.0.11
+    image: registry.open-rbt.com/mobile-wash-control-web:v0.0.17
     container_name: wash-control
     restart: always
     networks:
