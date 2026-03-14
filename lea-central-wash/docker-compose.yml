@@ -12,7 +12,7 @@ volumes:
 
 services:
   hal:
-    image: registry.open-rbt.com/lcw-hal:v0.0.19
+    image: registry.open-rbt.com/lcw-hal:v0.0.20
     container_name: hal
     ports:
       - "8099:8099"
@@ -38,7 +38,7 @@ services:
         compress: "true"
  
   storage:
-    image: registry.open-rbt.com/lcw-storage:v0.0.46
+    image: registry.open-rbt.com/lcw-storage:v0.0.48
     container_name: storage
     ports:
       - "8020:8020"

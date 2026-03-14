@@ -1,72 +1,115 @@
 {
-  "annotations": { "list": [] },
+  "annotations": {
+    "list": []
+  },
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
+  "id": 1,
   "links": [],
   "panels": [
     {
-      "title": "Station Board Availability",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
           "custom": {
             "drawStyle": "line",
-            "lineInterpolation": "stepAfter",
             "fillOpacity": 30,
-            "pointSize": 1,
-            "lineWidth": 2
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 2,
+            "pointSize": 1
           },
-          "min": 0,
-          "max": 1,
           "decimals": 0,
-          "color": { "mode": "palette-classic" },
           "mappings": [
-            { "type": "value", "options": { "0": { "text": "OFFLINE" }, "1": { "text": "ONLINE" } } }
-          ]
+            {
+              "options": {
+                "0": {
+                  "text": "OFFLINE"
+                },
+                "1": {
+                  "text": "ONLINE"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "max": 1,
+          "min": 0
         },
         "overrides": []
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
       "options": {
-        "tooltip": { "mode": "multi" },
-        "legend": { "displayMode": "list", "placement": "bottom" }
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
       },
       "targets": [
         {
-          "expr": "rate(storage_station_ping_total[15s]) > bool 0",
-          "legendFormat": "Station {{station}}",
+          "expr": "hal_board_detected",
+          "legendFormat": "{{type}} ({{port}})",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Station Board Availability",
+      "type": "timeseries"
     },
     {
-      "title": "Terminal Status (pings/15s)",
-      "type": "stat",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
           "decimals": 0,
-          "color": { "mode": "thresholds" },
+          "mappings": [],
           "thresholds": {
             "steps": [
-              { "color": "red", "value": null },
-              { "color": "yellow", "value": 1 },
-              { "color": "green", "value": 5 }
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "green",
+                "value": 5
+              }
             ]
           },
-          "mappings": []
+          "unit": "short"
         },
         "overrides": []
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
       "options": {
-        "reduceOptions": { "calcs": ["lastNotNull"] },
-        "textMode": "auto",
         "colorMode": "background",
-        "graphMode": "none"
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "auto"
       },
       "targets": [
         {
@@ -74,33 +117,53 @@
           "legendFormat": "Station {{station}}",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Terminal Status (pings/15s)",
+      "type": "stat"
     },
     {
-      "title": "Board Last Response (seconds ago)",
-      "type": "stat",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "unit": "s",
+          "color": {
+            "mode": "thresholds"
+          },
           "decimals": 0,
-          "color": { "mode": "thresholds" },
           "thresholds": {
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 5 },
-              { "color": "red", "value": 30 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
             ]
-          }
+          },
+          "unit": "s"
         },
         "overrides": []
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
       "options": {
-        "reduceOptions": { "calcs": ["lastNotNull"] },
-        "textMode": "auto",
         "colorMode": "background",
-        "graphMode": "none"
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "auto"
       },
       "targets": [
         {
@@ -108,20 +171,30 @@
           "legendFormat": "Station {{station}}",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Board Last Response (seconds ago)",
+      "type": "stat"
     },
     {
-      "title": "Station Command Success (rate/min)",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "line", "fillOpacity": 10 },
-          "unit": "short",
-          "color": { "mode": "palette-classic" }
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "unit": "short"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
       },
       "targets": [
         {
@@ -129,56 +202,96 @@
           "legendFormat": "Station {{station}}",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Station Command Success (rate/min)",
+      "type": "timeseries"
     },
     {
-      "title": "Board Last Error (seconds ago)",
-      "type": "stat",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "unit": "s",
+          "color": {
+            "mode": "thresholds"
+          },
           "decimals": 0,
-          "color": { "mode": "thresholds" },
+          "noValue": "No errors",
           "thresholds": {
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 5 },
-              { "color": "red", "value": 30 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 10
+              },
+              {
+                "color": "green",
+                "value": 20
+              }
             ]
           },
-          "noValue": "No errors"
+          "unit": "s"
         },
         "overrides": []
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
       "options": {
-        "reduceOptions": { "calcs": ["lastNotNull"] },
-        "textMode": "auto",
         "colorMode": "background",
-        "graphMode": "none"
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "auto"
       },
       "targets": [
         {
-          "expr": "time() - hal_station_last_error_timestamp",
+          "expr": "time() - hal_station_last_error_timestamp{} > 0 and hal_station_last_error_timestamp > 0",
+          "instant": true,
+          "interval": "",
           "legendFormat": "Station {{station}}",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Board Last Error (seconds ago)",
+      "type": "stat"
     },
     {
-      "title": "Current Program per Station",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "line", "fillOpacity": 0, "pointSize": 3, "stacking": { "mode": "none" } },
-          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "pointSize": 3,
+            "stacking": {
+              "mode": "none"
+            }
+          },
           "decimals": 0,
-          "color": { "mode": "palette-classic" }
+          "unit": "short"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
       },
       "targets": [
         {
@@ -186,26 +299,42 @@
           "legendFormat": "Station {{station}}",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Current Program per Station",
+      "type": "timeseries"
     },
     {
-      "title": "Station Balance",
-      "type": "stat",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "unit": "currencyRUB",
-          "color": { "mode": "palette-classic" },
+          "color": {
+            "mode": "palette-classic"
+          },
           "thresholds": {
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 100 },
-              { "color": "red", "value": 500 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 100
+              },
+              {
+                "color": "red",
+                "value": 500
+              }
             ]
-          }
+          },
+          "unit": "currencyRUB"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
       },
       "targets": [
         {
@@ -213,20 +342,30 @@
           "legendFormat": "Station {{station}}",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Station Balance",
+      "type": "stat"
     },
     {
-      "title": "Ping Rate per Station (per min)",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "line", "fillOpacity": 10 },
-          "unit": "short",
-          "color": { "mode": "palette-classic" }
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "unit": "short"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
       },
       "targets": [
         {
@@ -234,20 +373,30 @@
           "legendFormat": "Station {{station}}",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Ping Rate per Station (per min)",
+      "type": "timeseries"
     },
     {
-      "title": "HTTP Request Rate (storage)",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "line", "fillOpacity": 10 },
-          "unit": "reqps",
-          "color": { "mode": "palette-classic" }
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "unit": "reqps"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 32
       },
       "targets": [
         {
@@ -255,21 +404,41 @@
           "legendFormat": "{{resource}} {{method}} {{code}}",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "HTTP Request Rate (storage)",
+      "type": "timeseries"
     },
     {
-      "title": "Motor Speed",
-      "type": "gauge",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "unit": "percent",
-          "min": 0,
           "max": 100,
-          "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 80 }, { "color": "red", "value": 100 } ] }
+          "min": 0,
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 100
+              }
+            ]
+          },
+          "unit": "percent"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 32
       },
       "targets": [
         {
@@ -277,20 +446,30 @@
           "legendFormat": "Station {{id}}",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Motor Speed",
+      "type": "gauge"
     },
     {
-      "title": "Money Received (total)",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "line", "fillOpacity": 20 },
-          "unit": "currencyRUB",
-          "color": { "mode": "palette-classic" }
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 20
+          },
+          "unit": "currencyRUB"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 32
       },
       "targets": [
         {
@@ -298,46 +477,66 @@
           "legendFormat": "Station {{station}} ({{type}})",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Money Received (total)",
+      "type": "timeseries"
     },
     {
-      "title": "TCP Reconnects (rate/min)",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 40 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "bars", "fillOpacity": 50 },
-          "unit": "short",
-          "color": { "mode": "palette-classic" }
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 50
+          },
+          "unit": "short"
         },
         "overrides": []
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 40
+      },
       "targets": [
         {
-          "expr": "rate(hal_rev2_board_tcp_reconnect[5m]) * 60",
-          "legendFormat": "{{port}}",
+          "expr": "rate(hal_rev2_board_rs_err[30s]) * 60",
+          "legendFormat": "board {{station}}",
           "refId": "A"
         },
         {
-          "expr": "rate(hal_motor_tcp_reconnect[5m]) * 60",
+          "expr": "rate(hal_motor_tcp_reconnect[30s]) * 60",
           "legendFormat": "motor {{port}}",
           "refId": "B"
         }
-      ]
+      ],
+      "title": "TCP Errors (rate/min)",
+      "type": "timeseries"
     },
     {
-      "title": "DB Call Duration (p99)",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 36 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "line", "fillOpacity": 10 },
-          "unit": "s",
-          "color": { "mode": "palette-classic" }
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "unit": "s"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 36
       },
       "targets": [
         {
@@ -345,20 +544,30 @@
           "legendFormat": "{{method}}",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "DB Call Duration (p99)",
+      "type": "timeseries"
     },
     {
-      "title": "DB Errors (rate/min)",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 36 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "bars", "fillOpacity": 50 },
-          "unit": "short",
-          "color": { "mode": "palette-classic" }
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 50
+          },
+          "unit": "short"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 36
       },
       "targets": [
         {
@@ -366,20 +575,30 @@
           "legendFormat": "{{method}}",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "DB Errors (rate/min)",
+      "type": "timeseries"
     },
     {
-      "title": "Process CPU Usage",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 44 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "line", "fillOpacity": 20 },
-          "unit": "percentunit",
-          "color": { "mode": "palette-classic" }
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 20
+          },
+          "unit": "percentunit"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 44
       },
       "targets": [
         {
@@ -392,20 +611,30 @@
           "legendFormat": "Storage CPU",
           "refId": "B"
         }
-      ]
+      ],
+      "title": "Process CPU Usage",
+      "type": "timeseries"
     },
     {
-      "title": "Process Memory (RSS)",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 44 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "line", "fillOpacity": 20 },
-          "unit": "bytes",
-          "color": { "mode": "palette-classic" }
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 20
+          },
+          "unit": "bytes"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 44
       },
       "targets": [
         {
@@ -418,20 +647,30 @@
           "legendFormat": "Storage RSS",
           "refId": "B"
         }
-      ]
+      ],
+      "title": "Process Memory (RSS)",
+      "type": "timeseries"
     },
     {
-      "title": "Go Goroutines",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 52 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "line", "fillOpacity": 10 },
-          "unit": "short",
-          "color": { "mode": "palette-classic" }
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "unit": "short"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 52
       },
       "targets": [
         {
@@ -444,20 +683,30 @@
           "legendFormat": "Storage",
           "refId": "B"
         }
-      ]
+      ],
+      "title": "Go Goroutines",
+      "type": "timeseries"
     },
     {
-      "title": "Go GC Duration (p99)",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 52 },
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "line", "fillOpacity": 10 },
-          "unit": "s",
-          "color": { "mode": "palette-classic" }
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "unit": "s"
         },
         "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 52
       },
       "targets": [
         {
@@ -470,17 +719,270 @@
           "legendFormat": "Storage GC p99",
           "refId": "B"
         }
-      ]
+      ],
+      "title": "Go GC Duration (p99)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "affkkom25h1q8a"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "max": 100,
+          "min": 0,
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 60
+      },
+      "id": 1,
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "hal_converter_pro_cpu_load",
+          "legendFormat": "{{ip}} PRO",
+          "refId": "A"
+        },
+        {
+          "expr": "hal_converter_app_cpu_load",
+          "legendFormat": "{{ip}} APP",
+          "refId": "B"
+        }
+      ],
+      "title": "Converter CPU Load",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "affkkom25h1q8a"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 60
+      },
+      "id": 2,
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "hal_converter_chip_temp_celsius",
+          "legendFormat": "{{ip}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Converter Chip Temperature",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "affkkom25h1q8a"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 68
+      },
+      "id": 3,
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "hal_converter_free_heap_bytes",
+          "legendFormat": "{{ip}} free",
+          "refId": "A"
+        },
+        {
+          "expr": "hal_converter_min_heap_bytes",
+          "legendFormat": "{{ip}} min",
+          "refId": "B"
+        },
+        {
+          "expr": "hal_converter_total_heap_bytes",
+          "legendFormat": "{{ip}} total",
+          "refId": "C"
+        }
+      ],
+      "title": "Converter Heap Memory",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "affkkom25h1q8a"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 76
+      },
+      "id": 4,
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "hal_station_downtime_seconds",
+          "legendFormat": "station {{station}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Station Downtime (seconds since last success)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "affkkom25h1q8a" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100,
+          "custom": { "drawStyle": "line", "fillOpacity": 10 },
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 84 },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        { "expr": "hal_converter_board_success_rate", "legendFormat": "board {{board}} ({{ip}})", "refId": "A" }
+      ],
+      "title": "Converter Board Success Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "affkkom25h1q8a" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": { "drawStyle": "line", "fillOpacity": 10 },
+          "color": { "mode": "palette-classic" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 1000 },
+            { "color": "red", "value": 5000 }
+          ]}
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 84 },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        { "expr": "hal_converter_board_last_ok_ms", "legendFormat": "board {{board}} ({{ip}})", "refId": "A" }
+      ],
+      "title": "Converter Board Last OK (ms)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "affkkom25h1q8a" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100,
+          "custom": { "drawStyle": "line", "fillOpacity": 10 },
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 92 },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        { "expr": "hal_converter_motor_success_rate", "legendFormat": "motor {{motor}} ({{ip}})", "refId": "A" }
+      ],
+      "title": "Converter Motor Success Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "affkkom25h1q8a" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "drawStyle": "line", "fillOpacity": 10 },
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 92 },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        { "expr": "hal_converter_motor_timeouts_total", "legendFormat": "motor {{motor}} ({{ip}})", "refId": "A" }
+      ],
+      "title": "Converter Motor Timeouts",
+      "type": "timeseries"
     }
   ],
   "refresh": "10s",
   "schemaVersion": 39,
-  "tags": ["wash", "openrbt"],
-  "templating": { "list": [] },
-  "time": { "from": "now-1h", "to": "now" },
+  "tags": [
+    "wash",
+    "openrbt"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
   "timepicker": {},
   "timezone": "",
   "title": "OpenRBT Wash Station",
-  "uid": "openrbt-wash",
-  "version": 3
+  "uid": "openrbt-wash"
 }
