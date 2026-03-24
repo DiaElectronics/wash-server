@@ -926,9 +926,9 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 84 },
       "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
       "targets": [
-        { "expr": "hal_converter_board_last_ok_ms", "legendFormat": "board {{board}} ({{ip}})", "refId": "A" }
+        { "expr": "hal_converter_board_ok_interval_ms", "legendFormat": "board {{board}} ({{ip}})", "refId": "A" }
       ],
-      "title": "Converter Board Last OK (ms)",
+      "title": "Converter Board OK Interval (ms)",
       "type": "timeseries"
     },
     {
@@ -962,9 +962,9 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 92 },
       "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
       "targets": [
-        { "expr": "hal_converter_motor_timeouts_total", "legendFormat": "motor {{motor}} ({{ip}})", "refId": "A" }
+        { "expr": "increase(hal_converter_motor_timeouts_total[1m])", "legendFormat": "motor {{motor}} ({{ip}})", "refId": "A" }
       ],
-      "title": "Converter Motor Timeouts",
+      "title": "Converter Motor Timeouts / min",
       "type": "timeseries"
     }
   ],
