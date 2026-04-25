@@ -87,7 +87,7 @@ services:
         compress: "true"
 
   online-kasse:
-    image: r.open-rbt.com/lcw-kasse:v0.0.1
+    image: r.open-rbt.com/lcw-kasse:v0.0.4
     container_name: kasse
     ports:
       - "8443:8443"
@@ -108,7 +108,7 @@ services:
       - postgres
  
   postgres:
-    image: r.open-rbt.com/postgres:13
+    image: r.open-rbt.com/postgres:14
     container_name: lcw-pg
     restart: always
     volumes:
