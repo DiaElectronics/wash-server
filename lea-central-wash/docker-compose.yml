@@ -12,7 +12,7 @@ volumes:
 
 services:
   hal:
-    image: r.open-rbt.com/lcw-hal:v0.0.20
+    image: r.open-rbt.com/lcw-hal:v0.0.21
     container_name: hal
     ports:
       - "8099:8099"
