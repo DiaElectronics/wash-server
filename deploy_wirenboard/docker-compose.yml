@@ -32,7 +32,7 @@ services:
         max-file: "3"
 
   storage:
-    image: registry.open-rbt.com/lcw-storage:v0.0.45
+    image: registry.open-rbt.com/lcw-storage:v0.0.62
     container_name: storage
     ports:
       - "8020:8020"
